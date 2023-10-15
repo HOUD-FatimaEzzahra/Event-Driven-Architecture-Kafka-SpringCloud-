@@ -2,7 +2,6 @@ package com.houd.kafkacloud;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/kafka")
 public class KafkaProducerController {
@@ -15,7 +14,7 @@ public class KafkaProducerController {
 
     @PostMapping("/publish/{message}")
     public String sendMessageToKafkaTopic(@PathVariable String message) {
-        kafkaTemplate.send("testTopic", message);
-        return "Message envoyé au topic Kafka avec succès : " + message;
+        kafkaTemplate.send("testTopic", 1, message);
+        return "Message envoyé avec succès !";
     }
 }
