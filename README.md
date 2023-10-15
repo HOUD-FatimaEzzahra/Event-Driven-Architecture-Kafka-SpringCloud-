@@ -1,37 +1,52 @@
-# **Application de Microservices avec Spring Boot**
+# **Application de Traitement de Données en Temps Réel avec Kafka et Spring**
 
-Ce projet met en œuvre une architecture de microservices avec Spring Boot. Chaque service a un rôle spécifique dans le système global de gestion de facturation.
+    Cette application démontre le traitement de données en temps réel en utilisant Apache Kafka et Spring. Elle est divisée en deux parties principales : Kafka avec Docker et Kafka avec Spring Cloud.
 
-## Architecture
+## Partie 1 : Kafka avec Docker
 
-Dans cette architecture de microservices, les différentes composantes interagissent de manière synergique pour offrir une solution de gestion de facturation robuste et évolutive. Le Service Client (Customer-service) est responsable de la gestion des données clients, tandis que le Service Inventaire (Inventory-service) gère les informations sur les produits. La Passerelle (Spring Cloud Gateway) agit comme une interface d'entrée unique, acheminant les requêtes des clients vers les services appropriés en fonction des règles de routage établies. L'Annuaire (Netflix Eureka Server) joue un rôle essentiel en enregistrant et en répertoriant tous les services, permettant ainsi aux composants de se découvrir mutuellement. Le Service de Facturation (Billing-Service) communique avec les Services Client et Inventaire à l'aide de Open Feign, facilitant ainsi l'échange d'informations nécessaires à la génération des factures. Enfin, l'Interface Utilisateur (Client Angular) offre une interface conviviale permettant aux utilisateurs de visualiser les factures générées. L'ensemble de ces composants travaille de concert pour offrir une expérience fluide et efficace, mettant en avant les avantages et la puissance de l'architecture de microservices avec Spring Boot.
+### Introduction à Kafka
 
-![arch](https://github.com/HOUD-FatimaEzzahra/Spring-Cloud/blob/main/Architecture.png)
+Apache Kafka est une plateforme de streaming d'événements distribuée conçue pour le traitement de données en temps réel à haut débit et tolérant aux pannes. Elle est couramment utilisée pour construire des pipelines de données en streaming et des applications en temps réel.
 
-1. **Service Client** (Customer-service)
+### Configuration de Kafka avec Docker
+
+Pour exécuter Kafka localement, nous utilisons Docker, ce qui nous permet de configurer Kafka et Zookeeper rapidement.
+    1. Installer Docker : Téléchargez et installez Docker depuis le site officiel.
+    2. Fichier Docker-Compose : Créez un fichier docker-compose.yml avec le contenu suivant :
     
-- Entité Customer: Représente les détails d'un client.
-- Interface CustomerRepository: Gère la persistance des données des clients.
-- API Restful: Fournit des endpoints pour les opérations CRUD.
+    ``` version: '2'
+        services:
+            zookeeper:
+                image: wurstmeister/zookeeper:3.4.6
+                ports: "2181:2181"
+            kafka:
+                image: wurstmeister/kafka:2.11-2.3.0
+                ports:"9092:9092"
+        expose: "9093"
+        environment:
+            KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://localhost:9092
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+            KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+            KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+        volumes: /var/run/docker.sock:/var/run/docker.sock
 
-2. **Service Inventaire** (Inventory-service)
+3. Démarrer Kafka : Dans le terminal, naviguez vers le répertoire contenant le fichier docker-compose.yml et exécutez :
 
-- Entité Product: Représente les détails d'un produit.
-- Interface ProductRepository: Gère la persistance des données des produits.
-- API Restful: Fournit des endpoints pour les opérations CRUD.
+        ``` docker-compose up -d
 
-3. **Passerelle** (Spring Cloud Gateway)
+Cela lancera les services Kafka et Zookeeper dans des conteneurs Docker.
 
-    Routage dynamique: La passerelle dirige les requêtes vers les services appropriés en fonction des règles de routage définies.
+## Partie 2 : Kafka avec Spring Cloud
+### Intégration de Kafka avec Spring
 
-4. **Annuaire** (Netflix Eureka Server)
+Spring Cloud Stream est un framework qui simplifie le développement d'applications qui consomment et produisent des messages. Il fournit une abstraction pratique sur les courtiers de messages sous-jacents, y compris Kafka.
+Structure de l'Application
 
-    Enregistrement des Services: Les services s'enregistrent auprès de l'annuaire pour être découvrables.
+### L'application Spring est structurée comme suit :
 
-5. **Service de Facturation** (Billing-Service) avec Open Feign
+- Producteur Kafka : Contient un point de terminaison API REST pour envoyer des messages à Kafka.
+- Consommateur Kafka : Écoute le sujet Kafka et traite les messages entrants.
+- Traitement en Temps Réel avec Kafka Streams (optionnel) : Effectue un traitement en temps réel sur les données.
 
-    Communication avec les Services Client et Inventaire: Utilisation de Open Feign pour appeler les autres services.
 
-6. **Interface Utilisateur** (Client Angular)
-
-    Affichage des Factures: Une interface utilisateur permettant d'afficher les factures générées par le service de facturation.
