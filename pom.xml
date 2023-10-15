@@ -55,7 +55,11 @@
 			<scope>test</scope>
 		</dependency>
 
-
+		<!-- Dépendance pour Spring Cloud Stream -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream</artifactId>
+		</dependency>
 		<!-- Spring Web for Rest Controller -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

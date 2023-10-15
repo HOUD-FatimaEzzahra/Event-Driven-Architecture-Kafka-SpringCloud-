@@ -1,4 +1,4 @@
-package com.houd.kafkacloud.consumer;
+package com.houd.kafkacloud;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
